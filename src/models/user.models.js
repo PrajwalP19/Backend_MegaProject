@@ -55,14 +55,14 @@ const userSchema = new Schema(
             type: String
         }
     },
-    
+
     {timestamps: true}
 )
 
 userSchema.pre("save", async function(next){
-    if(!this.password.isModified("password")) return next()
+    if (!this.isModified("password")) return next();
     
-    this.password = bcrypt.hash(this.password, 10)
+    this.password = await bcrypt.hash(this.password, 10)
     next()
 })
 
@@ -79,7 +79,7 @@ userSchema.methods.generateAccessToken = function(){
             username: this.username,
             fullName: this.fullName
         },
-        process.env.ACCESS_TOKEN_SECERT,
+        process.env.ACCESS_TOKEN_SECRET,
         {
             expiresIn: process.env.ACCESS_TOKEN_EXPIRY
         }
